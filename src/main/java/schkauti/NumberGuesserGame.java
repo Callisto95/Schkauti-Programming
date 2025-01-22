@@ -116,7 +116,7 @@ public class NumberGuesserGame {
 			final Optional<T> userInput = getValueFromEnum(eClass, input.readLine());
 			
 			if (userInput.isEmpty()) {
-				System.out.println("That is not of the choices.");
+				System.out.println("That is not one of the choices.");
 				
 				continue;
 			}
