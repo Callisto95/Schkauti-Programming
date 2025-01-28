@@ -13,34 +13,40 @@ public class NumberGuesserGame {
 		HIGHER,
 		LOWER,
 		CORRECT;
+		
 	}
-	
 	public static class ComputerData {
-		int min;
-		int max;
-		int currentDelta;
-		int currentGuess;
+		private final int min;
+		private final int max;
+		private int currentDelta;
+		private int currentGuess;
+		private int previousDelta;
 		
 		public ComputerData(final int min, final int max) {
-			this.min          = min;
-			this.max          = max;
+			this.min = min;
+			this.max = max;
 			this.currentDelta = (max - min) / 2;
-			this.currentGuess = this.min + this.currentDelta;
+			this.currentGuess = min + this.currentDelta;
+			this.previousDelta = -1;
 		}
 		
 		public void applyMove(Guess guess) {
-			currentDelta /= 2;
-			
-			if (currentDelta == 0) {
-				System.out.println("You're cheating! >:(");
-				System.exit(1);
-			}
+			currentDelta = Math.ceilDiv(currentDelta, 2);
 			
 			if (guess == Guess.HIGHER) {
 				currentGuess += currentDelta;
 			} else {
 				currentGuess -= currentDelta;
 			}
+			
+			currentGuess = Math.clamp(currentGuess, min, max);
+			
+			if (currentDelta == previousDelta) {
+				System.out.println("You're cheating! >:(");
+				System.exit(1);
+			}
+			
+			previousDelta = currentDelta;
 		}
 		
 		public int getGuess() {
@@ -66,7 +72,9 @@ public class NumberGuesserGame {
 			
 			ComputerData computerData = new ComputerData(minValue, maxValue);
 			
-			int maxTries = getNumberFromUser("How often can you guess?", br);
+			int maxGuesses = getNumberFromUser("How often can you guess?", br);
+			int guessWidth = (int) Math.log10(maxGuesses) + 1;
+			String format = String.format("%%%1$dd/%%%1$dd | ", guessWidth);
 			
 			GuessingPlayer whoIsGuessing = getEnumChoiceFromUser("Who is guessing?", GuessingPlayer.class, br);
 			
@@ -76,30 +84,37 @@ public class NumberGuesserGame {
 			}
 			
 			int guesses = 0;
-			while (guesses < maxTries) {
+			while (guesses < maxGuesses) {
+				System.out.printf(format, guesses + 1, maxGuesses);
+				
+				Guess instruction;
+				
 				if (whoIsGuessing == GuessingPlayer.USER) {
 					int number = getNumberFromUser("What is your guess?", br);
 					
 					if (number == numberToGuess) {
-						break;
+						instruction = Guess.CORRECT;
+					} else if (number < numberToGuess) {
+						instruction = Guess.HIGHER;
+					} else {
+						instruction = Guess.LOWER;
 					}
 					
-					System.out.println(capitalize(((number < numberToGuess) ? Guess.HIGHER : Guess.LOWER).name()));
+					System.out.println(capitalize(instruction.name()));
 				} else {
 					System.out.printf("The computer guessed %d. ", computerData.getGuess());
-					Guess userInstruction = getEnumChoiceFromUser("Is that higher or lower?", Guess.class, br);
-					
-					if (userInstruction == Guess.CORRECT) {
-						break;
-					}
-					
-					computerData.applyMove(userInstruction);
+					instruction = getEnumChoiceFromUser("Must it guess higher or lower?", Guess.class, br);
+					computerData.applyMove(instruction);
+				}
+				
+				if (instruction == Guess.CORRECT) {
+					break;
 				}
 				
 				guesses++;
 			}
 			
-			System.out.printf("%s has won!%n", (guesses < maxTries) ? "Guesser" : "The number dude");
+			System.out.printf("The %s has won!%n", (guesses < maxGuesses) ? "guesser" : "number dude");
 		} catch (IOException exc) {
 			exc.printStackTrace();
 		}
