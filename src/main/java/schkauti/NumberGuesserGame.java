@@ -3,6 +3,12 @@ package schkauti;
 import java.io.*;
 import java.util.*;
 
+
+/*
+Ich habe dieses Spiel nicht mit einem einfachen Text-editor, sondern einer IDE geschrieben.
+Ich bin eine IDE zu gewöhnt und hatte einfach Lust mal wieder etwas zu programmieren.
+ */
+
 public class NumberGuesserGame {
 	public enum GuessingPlayer {
 		USER,
@@ -13,20 +19,20 @@ public class NumberGuesserGame {
 		HIGHER,
 		LOWER,
 		CORRECT;
-		
 	}
+	
 	public static class ComputerData {
 		private final int min;
 		private final int max;
-		private int currentDelta;
-		private int currentGuess;
-		private int previousDelta;
+		private       int currentDelta;
+		private       int currentGuess;
+		private       int previousDelta;
 		
 		public ComputerData(final int min, final int max) {
-			this.min = min;
-			this.max = max;
-			this.currentDelta = (max - min) / 2;
-			this.currentGuess = min + this.currentDelta;
+			this.min           = min;
+			this.max           = max;
+			this.currentDelta  = (max - min) / 2;
+			this.currentGuess  = min + this.currentDelta;
 			this.previousDelta = -1;
 		}
 		
@@ -59,7 +65,10 @@ public class NumberGuesserGame {
 	}
 	
 	public static <T extends Enum<T>> Optional<T> getValueFromEnum(Class<T> e, String input) {
-		return Arrays.stream(e.getEnumConstants()).filter(constant -> constant.name().equals(input.toUpperCase())).findFirst();
+		final String uppercaseInput = input.toUpperCase();
+		return Arrays.stream(e.getEnumConstants())
+			.filter(constant -> constant.name().equals(uppercaseInput))
+			.findFirst();
 	}
 	
 	public static final Random RANDOM = new Random();
@@ -72,9 +81,9 @@ public class NumberGuesserGame {
 			
 			ComputerData computerData = new ComputerData(minValue, maxValue);
 			
-			int maxGuesses = getNumberFromUser("How often can you guess?", br);
-			int guessWidth = (int) Math.log10(maxGuesses) + 1;
-			String format = String.format("%%%1$dd/%%%1$dd | ", guessWidth);
+			int    maxGuesses = getNumberFromUser("How often can you guess?", br);
+			int    guessWidth = (int) Math.log10(maxGuesses) + 1;
+			String format     = String.format("%%%1$dd/%%%1$dd | ", guessWidth);
 			
 			GuessingPlayer whoIsGuessing = getEnumChoiceFromUser("Who is guessing?", GuessingPlayer.class, br);
 			
@@ -120,7 +129,8 @@ public class NumberGuesserGame {
 		}
 	}
 	
-	public static <T extends Enum<T>> T getEnumChoiceFromUser(String question, Class<T> eClass, BufferedReader input) throws IOException {
+	public static <T extends Enum<T>> T getEnumChoiceFromUser(String question, Class<T> eClass, BufferedReader input)
+		throws IOException {
 		List<String> choices = getStringsFromEnum(eClass).stream().map(NumberGuesserGame::capitalize).toList();
 		
 		while (true) {
@@ -139,12 +149,15 @@ public class NumberGuesserGame {
 		}
 	}
 	
-	public static int getBoundNumberFromUser(int min, int max, String question, BufferedReader input) throws IOException {
+	public static int getBoundNumberFromUser(int min, int max, String question, BufferedReader input)
+		throws IOException {
 		while (true) {
 			int number = getNumberFromUser(question, input);
 			
+			// min and max are inclusive
+			// 'number == min' is fine
 			if (number < min || number > max) {
-				System.out.println("That number is outside of the given bounds.");
+				System.out.printf("That number is outside of the given bounds (must be between %d and %d).", min, max);
 				continue;
 			}
 			
