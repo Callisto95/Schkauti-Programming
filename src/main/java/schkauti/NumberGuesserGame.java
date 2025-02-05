@@ -4,11 +4,6 @@ import java.io.*;
 import java.util.*;
 
 
-/*
-Ich habe dieses Spiel nicht mit einem einfachen Text-editor, sondern einer IDE geschrieben.
-Ich bin eine IDE zu gewöhnt und hatte einfach Lust mal wieder etwas zu programmieren.
- */
-
 public class NumberGuesserGame {
 	public enum GuessingPlayer {
 		USER,
