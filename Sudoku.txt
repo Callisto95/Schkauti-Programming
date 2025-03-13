@@ -1,0 +1,63 @@
+Programmieraufgabe:
+
+Schreibe ein Solver für ein standard 9x9x9-Sudoku mit folgenden Vorgaben implementiert werden:
+* Man muss in geeigneter Form eine JSON-Datei einlesen, das darin enthaltene Sudoku lösen und die Lösung in eine JSON-Datei schreiben können. Das verwendete Verfahren ist dabei frei wählbar (Bruteforce, Rekursion, Dynamic Programming, Branch-and-Bound, Branch-and-Cut, ...)
+* Die JSON enthält einen Eintrag "Sudoku", welche die 9 Zeilen angibt.
+
+Variante (etwas leichter): 
+	* Der Nutzer muss das Sudoku selbst lösen.
+	* Das Programm checkt, ob die aktuelle Belegung alle Bedingungen einhält.
+	* Hier muss man natürlich prüfen, inwiefern Ein-/Ausgabe erfolgt (geht auch über Konsole!)
+
+Optional (für ursprüngliche Variante, teilweise adaptierbar für Variante):
+* (Leicht) Einfache Regeln zum Lösen sollten enthalten sein (z.B.: Tritt eine Zahl in einer Box/Zeile/Spalte nur in einer möglichen Zelle auf, muss die Zahl darin stehen.) Macht den Lösungsprozess in der Regel schneller.
+* (Leicht) Es soll überprüft werden, ob die Lösung eindeutig ist. (Test auf "Proper Sudoku")
+* (Leicht) Es soll überprüft werden, ob die JSON-Datei ein valides und lösbares Rätsel enthält.
+* (Medium) Generisches Sudoku: Es soll ein NxNxN-Sudoku-Solver geschrieben werden. 
+	* Dabei ist N > 3 eine beliebige ganzzahl und nicht prim (hat also zwei Teiler neben 1 und sich selbst). Bspw. ist 6 = 2*3 oder 10 = 2*5 erlaubt, aber 7 nicht.
+	* Die JSON enthält dann einen Eintrag "Dimension"
+	* Die Dimension (w, h) in der JSON gibt die Breite (w) und Höhe (h) der Box an.
+	* Das Sudoku besitzt in einer Reihe dann h viele Boxen und in einer Spalte w viele Boxen.
+	* Die Regel sind analog.
+* (Schwer) Es sollen spezielle Regeln mit hinzugefügt werden.
+	* Thermo-Sudoku: Entlang eines gegebenen Pfades mit festem Start müssen die Zahlen aufsteigend sein (auch diagonal). In einer JSON-Datei existiert dann ein Eintrag mit einem Array von Thermo-Pfaden (geordnete Reihenfolge von Zellen)
+	* Whisper-Lines: Entland eines gegebenen Pfades müssen benachbarte Zellen (auch diagonal) eine Differenz von mindestens 5 besitzen. In einer JSON-Datei existiert dann ein Eintrag mit einem Array von Whisper-Lines.
+	* V's and X's: Benachbarte Zellen die mit einem V (bzw. X) markiert sind, müssen in Summe den Wert 5 (bzw. 10) ergeben. In einer JSON-Datei existiert dann ein Eintrag mit einem Array von benachbarten Zellen für die V's und X's.
+	* Beliebige andere Regeln.
+
+
+Einsendung / Link zu Repo bis spätestens 23.03.25:
+Discord oder schkauti@gmail.com
+
+
+
+JSON File:
+{
+	"Dimension": [3, 3],
+	"Sudoku": [
+				[0,9,0,8,6,5,2,0,0],
+				[0,0,5,0,1,2,0,6,8],
+				[0,0,0,0,0,0,0,4,0],
+				[0,0,0,0,0,8,0,5,6],
+				[0,0,8,0,0,0,4,0,0],
+				[4,5,0,9,0,0,0,0,0],
+				[0,8,0,0,0,0,0,0,0],
+				[2,4,0,1,7,0,5,0,0],
+				[0,0,7,2,8,3,0,9,0]
+			],
+	"Thermo": [
+				[[7,7],[7,8],[8,8]],
+				[[3,7],[2,6],[3,5]]
+			],
+	"Whisper":[
+				[[3,7],[4,7],[3,8],[4,8],[5,8]]
+			],
+	"X": [
+			[[7,1],[7,2]],
+			[[6,4],[5,5]]
+		],
+	"V": [
+			[[6,0],[7,0]],
+			[[4,4],[4,5]]
+		]
+}
