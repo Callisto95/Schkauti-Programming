@@ -32,6 +32,10 @@ public class NumberGuesserGame {
 		}
 		
 		public void applyMove(Guess guess) {
+			if (guess == Guess.CORRECT) {
+				return;
+			}
+			
 			currentDelta = Math.ceilDiv(currentDelta, 2);
 			
 			if (guess == Guess.HIGHER) {
