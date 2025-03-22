@@ -20,7 +20,7 @@ application {
 group = "net.callisto"
 version = "1.0-SNAPSHOT"
 description = "Schkauti-Programming"
-java.sourceCompatibility = JavaVersion.VERSION_23
+java.sourceCompatibility = JavaVersion.VERSION_21
 java.targetCompatibility = java.sourceCompatibility
 
 //publishing {

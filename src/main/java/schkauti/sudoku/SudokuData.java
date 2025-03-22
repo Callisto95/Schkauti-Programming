@@ -2,57 +2,62 @@ package schkauti.sudoku;
 
 public class SudokuData {
 	// final private Point2 dimension;
-	final int width;
-	final int height;
+	final int    width;
+	final int    height;
+	final Point2 boxDimension;
 	
 	int[][] numbers;
 	
-	protected SudokuData(final int[][] data) {
-		this.numbers = data;
-		this.width   = data.length;
-		this.height  = data[0].length;
+	protected SudokuData(final int[][] data, final Point2 boxDimension) {
+		this.boxDimension = boxDimension;
+		this.numbers      = data;
+		this.width        = data.length;
+		this.height       = data[0].length;
 	}
 	
-	public boolean isPlaceableColumn(final int x, final int y, final int value) {
+	public int maximumNumber() {
+		return this.boxDimension.x() * this.boxDimension.y();
+	}
+	
+	public boolean isPlaceableColumn(final Point2 position, final int value) {
 		for (int currentX = 0; currentX < this.width; currentX++) {
-			if (currentX == x) {
+			if (currentX == position.x()) {
 				continue;
 			}
 			
-			if (this.numbers[currentX][y] == value) {
+			if (get(position.withX(currentX)) == value) {
 				return false;
 			}
 		}
 		return true;
 	}
 	
-	public boolean isPlaceableRow(final int x, final int y, final int value) {
+	public boolean isPlaceableRow(final Point2 position, final int value) {
 		for (int currentY = 0; currentY < this.width; currentY++) {
-			if (currentY == y) {
+			if (currentY == position.y()) {
 				continue;
 			}
 			
-			if (this.numbers[x][currentY] == value) {
+			if (get(position.withY(currentY)) == value) {
 				return false;
 			}
 		}
 		return true;
 	}
 	
-	public boolean isPlaceableGrid(final int x, final int y, final int value) {
-		final int gridX = (x / 3) * 3;
-		final int gridY = (y / 3) * 3;
+	public boolean isPlaceableGrid(final Point2 position, final int value) {
+		final int gridX = (position.x() / this.boxDimension.x()) * this.boxDimension.x();
+		final int gridY = (position.y() / this.boxDimension.y()) * this.boxDimension.y();
 		
-		for (int relX = 0; relX < 3; relX++) {
-			for (int relY = 0; relY < 3; relY++) {
-				final int posX = gridX + relX;
-				final int posY = gridY + relY;
+		for (int relativeX = 0; relativeX < this.boxDimension.x(); relativeX++) {
+			for (int relativeY = 0; relativeY < this.boxDimension.y(); relativeY++) {
+				final Point2 currentPosition = new Point2(gridX + relativeX, gridY + relativeY);
 				
-				if (posX == x && posY == y) {
+				if (currentPosition.equals(position)) {
 					continue;
 				}
 				
-				if (this.numbers[posX][posY] == value) {
+				if (get(currentPosition) == value) {
 					return false;
 				}
 			}
@@ -60,8 +65,8 @@ public class SudokuData {
 		return true;
 	}
 	
-	public static SudokuData fromRaw(final SudokuRawData rawData) {
-		return new SudokuData(rawData.sudoku);
+	public boolean isPlaceable(final Point2 position, final int value) {
+		return isPlaceableColumn(position, value) && isPlaceableRow(position, value) && isPlaceableGrid(position, value);
 	}
 	
 	public SudokuData copy() {
@@ -71,23 +76,32 @@ public class SudokuData {
 			dataCopy[i] = this.numbers[i].clone();
 		}
 		
-		return new SudokuData(dataCopy);
+		return new SudokuData(dataCopy, this.boxDimension);
 	}
 	
-	public void set(final int x, final int y, final int value) {
-		this.numbers[x][y] = value;
+	public void set(final Point2 position, final int value) {
+		this.numbers[position.x()][position.y()] = value;
 	}
 	
-	public boolean isValuePresent(final int x, final int y) {
-		return this.numbers[x][y] != 0;
+	public int get(final Point2 position) {
+		return this.numbers[position.x()][position.y()];
 	}
 	
-	public void print() {
-		for(int x = 0; x < this.width; x++) {
-			for(int y = 0; y < this.height; y++) {
-				System.out.print(this.numbers[x][y]);
+	public boolean isValuePresent(final Point2 position) {
+		return get(position) != 0;
+	}
+	
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		
+		for (int x = 0; x < this.width; x++) {
+			for (int y = 0; y < this.height; y++) {
+				builder.append(this.numbers[x][y]);
 			}
-			System.out.println();
+			builder.append('\n');
 		}
+		
+		return builder.toString();
 	}
 }

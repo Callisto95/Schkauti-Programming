@@ -1,20 +1,7 @@
 package schkauti.sudoku;
 
 // Point2D is used by AWT
-public class Point2 {
-	final int x;
-	final int y;
-	
-	public Point2(final int x, final int y) {
-		this.x = x;
-		this.y = y;
-	}
-	
-	public Point2(final int[] data) {
-		this.x = data[0];
-		this.y = data[1];
-	}
-	
+public record Point2(int x, int y) {
 	public Point2 withX(final int x) {
 		return new Point2(x, this.y);
 	}
